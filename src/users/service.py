@@ -1,21 +1,34 @@
-from uuid import UUID
 from . import models
+from ..auth import service, models as auth_models
 
-# all
-def get_user_by_id(user_id: UUID) -> models.UserResponse:
+from typing import Annotated
+from fastapi import Depends
+from ..exceptions import AuthenticationError
+from bson import ObjectId
+
+from fastapi.concurrency import run_in_threadpool
+
+async def get_user_by_id(db, user) -> models.User | None:
+  try:
+    return await run_in_threadpool(db["users"].find_one, {"_id": ObjectId(user.get_id())})
+  except Exception:
+    return None
+    raise HTTPException(status_code=400, detail="Invalid user ID")
+
+async def add_user(db, new_user: models.User, _user: auth_models.TokenData) -> models.User | dict:
+  user = await get_user_by_id(db, _user)
+  if user and user.get('role') == 1:
+    await service.register_user(db, new_user)
+  else:
+    return {'msg' : 'failed'}
+
+async def update_user(db, new_user: models.Userupd, _user:auth_models.TokenData) -> models.Userupd:
+  user = await get_user_by_id(db, _user)
+  if user and user.get('role') == 1:
+    await service.register_user(db, new_user)
+  else:
+    return {'msg' : 'failed'}
   pass
-def change_password(user_id: UUID, password_change: models.PasswrodChange) -> None:
-  pass
-def get_dash(dash_id: UUID):
-  pass
-def get_report(report_id: UUID):
-  pass
-def register_form():
-  pass
-# manager
-def create_user():
-  pass
-def update_user():
-  pass
-def delete_user():
+
+async def delete_user(user_id):
   pass

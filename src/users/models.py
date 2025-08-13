@@ -1,9 +1,13 @@
 from pydantic import BaseModel, EmailStr
-from uuid import UUID
-from datetime import dateime
+from ..auth import models
+
+class User(models.RegisterUserRequest):
+  pass
+
+class Userupd(models.RegisterUserResponse):
+  pass
 
 class UserResponse(BaseModel):
-  id: UUID
   first_name: str
   last_name: str
   email: EmailStr
