@@ -7,6 +7,7 @@ from bson import ObjectId
 from fastapi.concurrency import run_in_threadpool
 
 async def register_user(db, user: models.RegisterUserRequest) -> models.RegisterUserResponse | dict:
+  print(user)
   try:
     user_dict = user.dict()
     user_dict["password"] = auth.hash_password(user.password)

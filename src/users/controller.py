@@ -12,10 +12,10 @@ router = APIRouter(
 async def add_user(db: DB, new_user: models.User, user : auth_models.TokenData = Depends(auth.get_current_user)) -> models.User | dict:
   return await service.add_user(db, new_user, user)
 
-# @router.put("/update_user")
-# async def update_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
-#   return await service.add_user(db, new_user, user)
+@router.patch("/update_user")
+async def update_user(db: DB, new_user: models.UpdateUserRequest, user : auth_models.TokenData = Depends(auth.get_current_user)) -> models.UpdateUserRequest:
+  return await service.update_user(db, new_user, user)
 
-# @router.delete("/delete_user")
-# async def delete_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
-#   return await service.add_user(db, new_user, user)
+@router.delete("/delete_user")
+async def delete_user(db: DB, user: models.DeleteUserRequest, _user : auth_models.TokenData = Depends(auth.get_current_user)) -> dict:
+  return await service.delete_user(db, user, _user)

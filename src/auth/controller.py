@@ -24,14 +24,14 @@ async def login_user(db: DB, data: models.SignUserRequest | dict) -> models.Sign
     return await service.login_user(db, data)
 
 
-@router.post("/add_user")
-async def add_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
-  return await service.add_user(db, new_user, user)
+# @router.post("/add_user")
+# async def add_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
+#   return await service.add_user(db, new_user, user)
 
-@router.put("/update_user")
-async def update_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
-  return await service.add_user(db, new_user, user)
+# @router.put("/update_user")
+# async def update_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
+#   return await service.add_user(db, new_user, user)
 
-@router.delete("/delete_user")
-async def delete_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
-  return await service.add_user(db, new_user, user)
+# @router.delete("/delete_user")
+# async def delete_user(db: DB, new_user: models.RegisterUserRequest, user : models.TokenData = Depends(auth.get_current_user)) -> models.RegisterUserRequest | dict:
+#   return await service.add_user(db, new_user, user)

@@ -4,8 +4,12 @@ from ..auth import models
 class User(models.RegisterUserRequest):
   pass
 
-class Userupd(models.RegisterUserResponse):
+class UpdateUserRequest(models.RegisterUserResponse):
   pass
+
+class DeleteUserRequest(BaseModel):
+  id: str
+
 
 class UserResponse(BaseModel):
   first_name: str
