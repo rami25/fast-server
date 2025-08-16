@@ -15,45 +15,49 @@ async def get_user_by_id(db, user) -> models.User | None:
     return None
     raise HTTPException(status_code=400, detail="Invalid user ID")
 
-async def add_user(db, new_user: models.User, _user: auth_models.TokenData) -> models.User | dict:
-  print(new_user)
+async def add_user(db, new_user: models.User, _user: auth_models.TokenData) -> models.UpdateUserRequest | dict:
   user = await get_user_by_id(db, _user)
-  print(user)
   if user and user.get('role') == 1:
     return await service.register_user(db, new_user)
   else:
     return {'msg' : 'failed'}
 
 
-async def update_user(db, new_user):
-  if not ObjectId.is_valid(new_user.id):
+async def update_user_util(db, user):
+  if not ObjectId.is_valid(user.id):
     raise HTTPException(status_code=400, detail="Invalid user ID")
 
-  update_dict = {k: v for k, v in new_user.dict().items() if k != "id" and v is not None}
+  update_dict = {k: v for k, v in user.dict().items() if k != "id" and v is not None}
 
   if not update_dict:
       raise HTTPException(status_code=400, detail="No fields to update")
 
   result = await run_in_threadpool(
       db["users"].update_one,
-      {"_id": ObjectId(new_user.id)},
+      {"_id": ObjectId(user.id)},
       {"$set": update_dict}
   )
 
   if result.matched_count == 0:
       raise HTTPException(status_code=404, detail="User not found")
 
-  return {"message": "User updated successfully"}
+  ret = await run_in_threadpool(db["users"].find_one, {"_id": ObjectId(user.id)})
+  ret["_id"] = str(ret["_id"])
+  return ret
+  # return {"message": "User updated successfully"}
 
 
-async def update_user(db, new_user: models.UpdateUserRequest, _user: auth_models.TokenData) -> models.UpdateUserRequest:
+async def update_user(db, new_user: models.UpdateUserRequest, _user: auth_models.TokenData) -> models.UpdateUserRequest | dict:
   user = await get_user_by_id(db, _user)
   if user and user.get('role') == 1:
-    return await update_user(db, new_user)
+    return await update_user_util(db, new_user)
   else:
     return {'msg' : 'failed'}
 
-async def delete_user(db, user):
+
+
+
+async def delete_user_util(db, user):
   if not ObjectId.is_valid(user.id):
       raise HTTPException(status_code=400, detail="Invalid user ID")
 
@@ -67,9 +71,9 @@ async def delete_user(db, user):
 
   return {"message": "User deleted successfully"}
 
-async def delete_user(db, user: models.DeleteUserRequest, _user: auth_models.TokenData) -> dict:
+async def delete_user(db, duser: models.DeleteUserRequest, _user: auth_models.TokenData) -> dict:
   user = await get_user_by_id(db, _user)
   if user and user.get('role') == 1:
-    return await delete_user(db, user)
+    return await delete_user_util(db, duser)
   else:
     return {'msg' : 'failed'}

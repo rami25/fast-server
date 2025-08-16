@@ -9,11 +9,11 @@ router = APIRouter(
 )
 
 @router.post("/add_user")
-async def add_user(db: DB, new_user: models.User, user : auth_models.TokenData = Depends(auth.get_current_user)) -> models.User | dict:
+async def add_user(db: DB, new_user: models.User, user : auth_models.TokenData = Depends(auth.get_current_user)) -> models.UpdateUserRequest | dict:
   return await service.add_user(db, new_user, user)
 
 @router.patch("/update_user")
-async def update_user(db: DB, new_user: models.UpdateUserRequest, user : auth_models.TokenData = Depends(auth.get_current_user)) -> models.UpdateUserRequest:
+async def update_user(db: DB, new_user: models.UpdateUserRequest, user : auth_models.TokenData = Depends(auth.get_current_user)) -> models.UpdateUserRequest | dict:
   return await service.update_user(db, new_user, user)
 
 @router.delete("/delete_user")

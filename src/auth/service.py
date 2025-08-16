@@ -7,7 +7,6 @@ from bson import ObjectId
 from fastapi.concurrency import run_in_threadpool
 
 async def register_user(db, user: models.RegisterUserRequest) -> models.RegisterUserResponse | dict:
-  print(user)
   try:
     user_dict = user.dict()
     user_dict["password"] = auth.hash_password(user.password)
@@ -37,7 +36,7 @@ async def authenticate_user(db, data: models.SignUserRequest | dict) -> models.S
       return None
     return user
 
-async def login_user(db, data: models.SignUserRequest | dict) -> models.SignUserResponse | dict:
+async def login_user(db, data: models.SignUserRequest) -> models.SignUserResponse | dict:
   user = await authenticate_user(db, data)
   if not user:
     return { 'msg' : 'failed' }
